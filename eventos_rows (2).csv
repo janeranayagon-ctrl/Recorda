@@ -1,0 +1,18 @@
+id,usuario,titulo,fecha,hora,tipo,mensajes,completado
+1,1,parcial Matematicas,2026-08-28,20:00:00,examen,hoy tienes parcial,false
+2,1,"cumpleaños de Mamá ",2026-08-30,07:00:00,Cumpleaños,"Felicitar a Mama en su cumpleaños ",false
+3,1,"entrega del proyecto ",2026-09-01,14:35:09,"Terea de Universidad ",Entregar proyecto web,false
+4,1,"Parcial de física ",2026-09-03,10:00:00,Examen,Estudiar Física,false
+5,1,"Reunión del equipo ",2026-09-04,16:00:00,Reunión,Reunión del proyecto,false
+6,1,Taller Programación,2026-09-05,18:15:00,taller,Llevar el portátil,false
+7,1,Exposición Inglés,2026-09-08,07:00:00,Exposición,Preparar diapositivas,false
+8,1,Parcial Química,2026-09-10,11:00:00,Examen,Repasar ejercicios,false
+9,1,Laboratorio Electrónica,2026-09-15,19:30:00,Clase,Llevar materiales,false
+10,1,Entrega Informe,2026-09-16,14:00:00,Tarea,Subir el PDF,false
+11,1,Cita Médica,2026-09-18,09:30:00,Examen Medico,Asistir a la cita,false
+12,1,Parcial Electrónica,2026-09-20,07:00:00,Examen,Estudiar circuitos,false
+13,1,Cumpleaños Ana,0226-09-22,17:00:00,"Cumpleaños
+
+","Llamar a Ana para felicitarla en su día especial ",false
+14,1,"Parcial de optativa ",2026-09-29,11:00:00,Examen,Repasar ejercicios,false
+15,1,Cumpleaños Juan,2026-09-30,07:00:00,Cumpleaños,Comprar regalo,false
