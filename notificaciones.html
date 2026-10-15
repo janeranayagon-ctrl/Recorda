@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notificaciones | Recorda+</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<style>
+  body{min-height:100vh;align-items:flex-start;padding:20px;background:#0f172a}
+  .page{width:min(100%,370px);padding-bottom:40px}
+  .header{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+  .back{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;background:#1e293b;color:#fff;text-decoration:none;font-size:24px}
+  h1{font-size:24px}
+  .subtitle{color:#94a3b8;font-size:13px;margin-top:4px}
+  .notification{padding:16px;border-radius:18px;background:#1e293b;margin-bottom:12px;border-left:4px solid #2563eb}
+  .notification h2{font-size:16px}
+  .notification p{color:#cbd5e1;font-size:13px;line-height:1.4;margin-top:7px}
+  .empty{padding:28px 18px;border:1px dashed #475569;border-radius:18px;text-align:center;color:#cbd5e1}
+  .empty p{font-size:13px;margin-top:8px}
+  .home{display:block;margin-top:18px;padding:11px;border-radius:12px;background:#2563eb;color:#fff;text-align:center;text-decoration:none;font-weight:bold}
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="header">
+    <a class="back" href="index.html" aria-label="Volver al inicio">←</a>
+    <div><h1>🔔 Notificaciones</h1><p class="subtitle">Tus próximos recordatorios</p></div>
+  </header>
+  <section id="notificationList" aria-live="polite"></section>
+  <a class="home" href="index.html">Volver al inicio</a>
+</main>
+<script>
+const sesion = JSON.parse(localStorage.getItem('sesion'));
+const list = document.getElementById('notificationList');
+if (!sesion || !sesion.usuario_id) {
+  window.location.href = 'login.html';
+}
+function readEvents() {
+  try { return JSON.parse(localStorage.getItem('eventos')) || []; } catch { return []; }
+}
+function escapeHtml(value) {
+  return String(value || '').replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[character]));
+}
+const events = readEvents().filter(evento => evento.usuario_id === sesion.usuario_id && !evento.completado)
+  .sort((a, b) => `${a.fecha}T${a.hora}`.localeCompare(`${b.fecha}T${b.hora}`));
+if (!events.length) {
+  list.innerHTML = '<div class="empty"><strong>No tienes notificaciones pendientes</strong><p>Cuando tengas eventos próximos aparecerán aquí.</p></div>';
+} else {
+  list.innerHTML = events.map(evento => `
+    <article class="notification">
+      <h2>${escapeHtml(evento.titulo)}</h2>
+      <p>📅 ${escapeHtml(evento.fecha)} · ⏰ ${escapeHtml(evento.hora)}</p>
+      <p>${escapeHtml(evento.mensaje || `Recordatorio: ${evento.recordar_antes || 5} minutos antes`)}</p>
+    </article>
+  `).join('');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,sans-serif;
+}
+
+body{
+background:#0f172a;
+display:flex;
+justify-content:center;
+padding:20px;
+color:white;
+}
+
+.container{
+width:370px;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.avatar{
+width:50px;
+height:50px;
+border-radius:50%;
+background:#2563eb;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:22px;
+font-weight:bold;
+}
+
+/* ===== RELOJ PREMIUM ===== */
+
+.top-info{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:18px;
+    margin-top:25px;
+}
+
+.clock-card{
+    flex:1.3;
+    display:flex;
+    align-items:center;
+    gap:15px;
+
+    padding:18px 22px;
+
+    border-radius:22px;
+
+    background:rgba(20,32,74,.55);
+
+    backdrop-filter:blur(20px);
+
+    border:1px solid rgba(80,140,255,.25);
+
+    box-shadow:
+    0 0 25px rgba(37,99,235,.25),
+    inset 0 0 15px rgba(255,255,255,.05);
+}
+
+.clock-icon{
+    font-size:32px;
+}
+
+.clock-content h1{
+    font-size:42px;
+    font-weight:700;
+    color:white;
+    line-height:1;
+    letter-spacing:1px;
+}
+
+.clock-content p{
+    margin-top:6px;
+    color:#BFD3FF;
+    font-size:15px;
+}
+
+.event-card{
+    flex:1;
+
+    padding:18px;
+
+    border-radius:20px;
+
+    background:rgba(20,32,74,.45);
+
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.event-card h3{
+    color:white;
+    margin-bottom:8px;
+}
+
+.event-card p{
+    color:#D1DBF7;
+    font-size:15px;
+}
+
+.card{
+padding:20px;
+border-radius:20px;
+margin-bottom:15px;
+}
+
+.azul{
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+}
+
+.morado{
+background:linear-gradient(135deg,#7c3aed,#5b21b6);
+}
+
+.card p{
+opacity:.8;
+margin-top:5px;
+}
+
+.sync-status{
+color:#94a3b8;
+font-size:12px;
+margin:4px 4px 18px;
+text-align:center;
+}
+
+.menu{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+width:360px;
+background:#1e293b;
+padding:10px;
+display:flex;
+justify-content:space-around;
+border-radius:20px;
+}
+
+.menu button{
+background:none;
+border:none;
+font-size:24px;
+color:white;
+cursor:pointer;
+}
+
+#nuevo{
+background:#2563eb;
+width:50px;
+height:50px;
+border-radius:50%;
+}
+
+.config-overlay{
+position:fixed;
+inset:0;
+display:none;
+align-items:center;
+justify-content:center;
+padding:20px;
+background:rgba(2,6,23,.72);
+z-index:5;
+}
+
+.config-overlay.visible{display:flex}
+
+.config-panel{
+position:relative;
+width:min(100%,370px);
+padding:25px;
+border:1px solid #334155;
+border-radius:20px;
+background:#1e293b;
+box-shadow:0 20px 50px rgba(0,0,0,.4);
+}
+
+.config-close{position:absolute;top:10px;right:14px;border:0;background:none;color:#cbd5e1;font-size:28px;cursor:pointer}
+.config-kicker{color:#60a5fa;font-size:11px;font-weight:bold;letter-spacing:1.5px}
+.config-panel h2{margin:7px 0 10px;font-size:22px}
+.config-help{color:#cbd5e1;font-size:13px;line-height:1.5;margin-bottom:20px}
+.config-panel label{display:block;color:#e2e8f0;font-size:12px;font-weight:bold;margin-bottom:7px}
+.config-panel input{width:100%;padding:12px;border:1px solid #475569;border-radius:9px;background:#0f172a;color:#fff;outline:none}
+.config-panel input:focus{border-color:#60a5fa}
+.config-save{width:100%;padding:12px;margin-top:14px;border:0;border-radius:9px;background:#2563eb;color:#fff;font-weight:bold;cursor:pointer}
+.config-message{min-height:18px;color:#93c5fd;font-size:12px;margin-top:12px}
+
+@media(max-width:400px){
+  .container{width:100%;}
+  .menu{width:calc(100% - 40px);}
+}

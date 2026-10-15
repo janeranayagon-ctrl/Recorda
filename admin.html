@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Panel Administrador</title>
+<style>
+body{font-family:Arial;background:#0f172a;color:#fff;padding:20px}
+table{width:100%;border-collapse:collapse;background:#1e293b;margin-top:15px}
+th,td{padding:10px;border:1px solid #334155}
+th{background:#2563eb}
+.card{background:#1e293b;padding:15px;border-radius:12px}
+input{padding:10px;width:100%;margin:10px 0;border-radius:8px;border:none}
+button{padding:10px 15px;background:#2563eb;color:#fff;border:none;border-radius:8px}
+</style>
+</head>
+<body>
+
+<div id="loginAdmin" class="card">
+<h2>🔒 Panel Administrador</h2>
+
+<input id="clave" type="password" placeholder="Clave de administrador">
+
+<button onclick="entrar()">Entrar</button>
+</div>
+
+<div id="panel" style="display:none">
+
+<h2>Inventario de Usuarios</h2>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Correo</th>
+</tr>
+</thead>
+<tbody id="tablaUsuarios"></tbody>
+</table>
+
+<h2 style="margin-top:30px">Inventario de Eventos</h2>
+
+<table>
+<thead>
+<tr>
+<th>Evento</th>
+<th>Usuario ID</th>
+<th>Fecha</th>
+<th>Hora</th>
+</tr>
+</thead>
+<tbody id="tablaEventos"></tbody>
+</table>
+
+</div>
+
+<script>
+
+const CLAVE="admin2026";
+
+function entrar(){
+
+if(clave.value!==CLAVE){
+
+alert("Clave incorrecta");
+
+return;
+
+}
+
+loginAdmin.style.display="none";
+
+panel.style.display="block";
+
+cargar();
+
+}
+
+function cargar(){
+
+const usuarios=JSON.parse(localStorage.getItem("usuarios"))||[];
+
+const eventos=JSON.parse(localStorage.getItem("eventos"))||[];
+
+tablaUsuarios.innerHTML="";
+
+usuarios.forEach(u=>{
+
+tablaUsuarios.innerHTML+=`
+<tr>
+<td>${u.usuario_id}</td>
+<td>${u.correo}</td>
+</tr>`;
+
+});
+
+tablaEventos.innerHTML="";
+
+eventos.forEach(e=>{
+
+tablaEventos.innerHTML+=`
+<tr>
+<td>${e.titulo}</td>
+<td>${e.usuario_id}</td>
+<td>${e.fecha}</td>
+<td>${e.hora}</td>
+</tr>`;
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
