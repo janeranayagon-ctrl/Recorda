@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2563EB">
+  <meta name="description" content="Organiza tus eventos y recordatorios con Recorda+.">
+  <title>Recorda+</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png" type="image/png">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2 id="saludo">Hola 👋</h2>
+      <div class="avatar" id="avatar">R</div>
+    </div>
+
+    <div class="top-info">
+      <div class="clock-card">
+        <div class="clock-icon">🕒</div>
+        <div class="clock-content">
+          <h1 id="hora">00:00:00</h1>
+          <p id="fecha">Cargando...</p>
+        </div>
+      </div>
+
+      <div class="event-card">
+        <h3>Próximo evento</h3>
+        <p id="proximoEvento">Sin eventos</p>
+      </div>
+    </div>
+
+    <div class="menu">
+      <button type="button" id="btnInicio" aria-label="Inicio">🏠</button>
+      <button type="button" id="btnEventos" aria-label="Ver mis eventos">📅</button>
+      <button type="button" id="btnNuevo" aria-label="Nuevo evento">＋</button>
+      <button type="button" id="btnCampana" aria-label="Ver notificaciones">🔔</button>
+      <button type="button" id="btnPerfil" aria-label="Ver perfil">👤</button>
+    </div>
+  </div>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(() => console.log('Service worker activo'))
+          .catch(error => console.error('Error de service worker:', error));
+      });
+    }
+  </script>
+</body>
+</html>

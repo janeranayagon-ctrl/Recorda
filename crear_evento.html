@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nuevo Evento | Recorda+</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<style>
+  body{min-height:100vh;align-items:flex-start;padding:20px;background:linear-gradient(135deg,#0f172a,#1e3a8a)}
+  .event-page{width:min(100%,370px);padding-bottom:90px}
+  .event-header{display:flex;align-items:center;gap:14px;margin-bottom:25px}
+  .back-link{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.08);color:#fff;text-decoration:none;font-size:24px}
+  .event-header h1{font-size:25px}
+  .event-header p{color:#d1d5db;font-size:13px;margin-top:4px}
+  .event-form{padding:22px;border:1px solid rgba(255,255,255,.12);border-radius:24px;background:rgba(255,255,255,.08);backdrop-filter:blur(16px);box-shadow:0 20px 45px rgba(0,0,0,.2)}
+  .field{display:block;margin-bottom:18px;color:#cbd5e1;font-size:13px;font-weight:600}
+  .field input,.field select,.field textarea{display:block;width:100%;margin-top:8px;padding:13px;border:0;border-radius:12px;background:rgba(255,255,255,.12);color:#fff;font:inherit;outline:none}
+  .field select option{background:#1e3a8a;color:#fff}
+  .field textarea{min-height:90px;resize:vertical}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(96,165,250,.12)}
+  .form-actions{display:flex;gap:10px;margin-top:25px}
+  .form-actions a,.form-actions button{flex:1;padding:13px;border-radius:10px;text-align:center;font:inherit;font-weight:700;cursor:pointer;text-decoration:none}
+  .form-actions a{border:1px solid rgba(255,255,255,.25);color:#cbd5e1}
+  .form-actions button{border:0;background:#2563eb;color:#fff}
+  .form-message{min-height:20px;margin-top:14px;color:#fca5a5;font-size:13px}
+  .form-message.success{color:#86efac}
+  .back-link:hover,.form-actions a:hover{background:rgba(255,255,255,.15)}
+</style>
+</head>
+<body>
+<main class="event-page">
+  <header class="event-header">
+    <a class="back-link" href="index.html" aria-label="Volver al inicio">←</a>
+    <div>
+      <h1>📅 Nuevo Evento</h1>
+      <p>Todos los eventos quedan ligados a tu Usuario ID</p>
+    </div>
+  </header>
+
+  <form id="eventForm" class="event-form">
+    <label class="field" for="titulo">Título del evento
+      <input id="titulo" name="titulo" type="text" placeholder="Ej. Reunión de equipo" maxlength="100" required autofocus>
+    </label>
+    <label class="field" for="fecha">Fecha
+      <input id="fecha" name="fecha" type="date" required>
+    </label>
+    <label class="field" for="hora">Hora
+      <input id="hora" name="hora" type="time" required>
+    </label>
+    <label class="field" for="tipo">Tipo de evento
+      <select id="tipo" name="tipo">
+        <option value="personal">Personal</option>
+        <option value="trabajo">Trabajo</option>
+        <option value="salud">Salud</option>
+        <option value="otro">Otro</option>
+      </select>
+    </label>
+    <label class="field" for="recordar">Recordar
+      <select id="recordar" name="recordar">
+        <option value="5">5 min antes</option>
+        <option value="10">10 min antes</option>
+        <option value="30">30 min antes</option>
+        <option value="60">1 hora antes</option>
+        <option value="1440" selected>1 día antes</option>
+      </select>
+    </label>
+    <label class="field" for="tono">Tono de alerta
+      <select id="tono" name="tono">
+        <option value="Campana">Campana</option>
+        <option value="Cristal">Cristal</option>
+        <option value="Digital">Digital</option>
+        <option value="Alarma">Alarma</option>
+      </select>
+    </label>
+    <label class="field" for="mensaje">Mensaje del recordatorio
+      <textarea id="mensaje" name="mensaje" rows="3" maxlength="500" placeholder="Mensaje del recordatorio"></textarea>
+    </label>
+    <div class="form-actions">
+      <a href="index.html">Cancelar</a>
+      <button type="submit" id="saveButton">Guardar evento</button>
+    </div>
+    <p id="formMessage" class="form-message" role="status"></p>
+  </form>
+</main>
+<script>
+const form = document.getElementById('eventForm');
+const message = document.getElementById('formMessage');
+const fechaInput = document.getElementById('fecha');
+const saveButton = document.getElementById('saveButton');
+
+function obtenerSesion() {
+  try {
+    return JSON.parse(localStorage.getItem('sesion') || 'null');
+  } catch {
+    return null;
+  }
+}
+
+const sesion = obtenerSesion();
+
+if (!sesion || !sesion.usuario_id || !sesion.correo) {
+  window.location.replace('login.html');
+}
+
+function fechaLocal() {
+  const ahora = new Date();
+  const anio = ahora.getFullYear();
+  const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+  const dia = String(ahora.getDate()).padStart(2, '0');
+  return `${anio}-${mes}-${dia}`;
+}
+
+fechaInput.min = fechaLocal();
+fechaInput.value = fechaLocal();
+
+form.addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  if (!sesion || !sesion.usuario_id || !sesion.correo) {
+    message.textContent = 'Inicia sesión nuevamente para guardar eventos.';
+    return;
+  }
+
+  const datos = new FormData(form);
+  const titulo = String(datos.get('titulo') || '').trim();
+  const fecha = String(datos.get('fecha') || '');
+  const hora = String(datos.get('hora') || '');
+
+  if (!titulo || !fecha || !hora) {
+    message.className = 'form-message';
+    message.textContent = 'Completa el título, la fecha y la hora.';
+    return;
+  }
+
+  if (fecha < fechaLocal()) {
+    message.className = 'form-message';
+    message.textContent = 'Selecciona una fecha de hoy o posterior.';
+    return;
+  }
+
+  let eventos = [];
+
+  try {
+    eventos = JSON.parse(localStorage.getItem('eventos') || '[]');
+    if (!Array.isArray(eventos)) eventos = [];
+  } catch {
+    eventos = [];
+  }
+
+  const evento = {
+    evento_id: `E${Date.now()}`,
+    usuario_id: String(sesion.usuario_id),
+    titulo,
+    fecha,
+    hora,
+    tipo: String(datos.get('tipo') || 'otro'),
+    mensaje: String(datos.get('mensaje') || '').trim(),
+    recordar_antes: Number(datos.get('recordar') || 1440),
+    tono: String(datos.get('tono') || 'Campana'),
+    completado: false,
+    recordatorio_enviado: false
+  };
+
+  eventos.push(evento);
+
+  try {
+    localStorage.setItem('eventos', JSON.stringify(eventos));
+  } catch {
+    message.className = 'form-message';
+    message.textContent = 'No se pudo guardar el evento en este navegador.';
+    return;
+  }
+
+  message.className = 'form-message success';
+  message.textContent = 'Evento guardado correctamente. El envío automático de correos aún requiere configurar el servidor de correo.';
+
+  saveButton.disabled = true;
+
+  setTimeout(() => {
+    window.location.href = 'index.html';
+  }, 1800);
+});
+</script>
+</body>
+</html>

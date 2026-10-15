@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mis Eventos | Recorda+</title>
+
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+
+<style>
+  body{
+    min-height:100vh;
+    align-items:flex-start;
+    padding:20px;
+    background:#0f172a
+  }
+
+  .events-page{
+    width:min(100%,370px);
+    padding-bottom:90px
+  }
+
+  .events-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:20px
+  }
+
+  .events-header h1{
+    font-size:22px
+  }
+
+  .user-id{
+    color:#cbd5e1;
+    font-size:14px
+  }
+
+  .event-list{
+    display:grid;
+    gap:12px
+  }
+
+  .event-item{
+    padding:16px;
+    border-radius:18px;
+    background:#1e293b;
+    margin-bottom:12px
+  }
+
+  .event-item.completed{
+    opacity:.62
+  }
+
+  .event-item.completed .event-title{
+    text-decoration:line-through
+  }
+
+  .event-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px
+  }
+
+  .event-title{
+    font-size:18px;
+    line-height:1.25
+  }
+
+  .event-type{
+    display:inline-block;
+    margin-top:8px;
+    padding:4px 10px;
+    border-radius:20px;
+    background:#2563eb;
+    color:#fff;
+    font-size:12px;
+    white-space:nowrap
+  }
+
+  .event-date{
+    margin-top:9px;
+    color:#e2e8f0;
+    font-size:13px
+  }
+
+  .event-message{
+    margin-top:7px;
+    color:#cbd5e1;
+    font-size:13px;
+    line-height:1.4
+  }
+
+  .event-actions{
+    display:flex;
+    gap:8px;
+    margin-top:12px
+  }
+
+  .event-actions button{
+    flex:1;
+    padding:10px;
+    border:0;
+    border-radius:12px;
+    background:#2563eb;
+    color:#fff;
+    font:inherit;
+    font-size:12px;
+    cursor:pointer
+  }
+
+  .event-actions button:hover{
+    filter:brightness(1.1)
+  }
+
+  .event-actions .edit-button{
+    background:#f59e0b
+  }
+
+  .event-actions .delete-button{
+    background:#ef4444;
+    color:#fecaca
+  }
+
+  .empty-state{
+    padding:30px 20px;
+    border:1px dashed rgba(255,255,255,.25);
+    border-radius:18px;
+    text-align:center;
+    color:#cbd5e1
+  }
+
+  .empty-state p{
+    margin:8px 0 18px;
+    font-size:13px
+  }
+
+  .create-link{
+    display:inline-block;
+    padding:11px 15px;
+    border-radius:10px;
+    background:#2563eb;
+    color:#fff;
+    font-weight:700;
+    text-decoration:none
+  }
+
+  .home-link{
+    display:block;
+    width:100%;
+    margin-top:18px;
+    padding:10px;
+    border:0;
+    border-radius:12px;
+    background:#2563eb;
+    color:#fff;
+    text-align:center;
+    text-decoration:none;
+    font-weight:700
+  }
+
+  .status-message{
+    min-height:18px;
+    margin:15px 2px 0;
+    color:#86efac;
+    font-size:13px;
+    text-align:center
+  }
+
+  .create-link:hover,
+  .home-link:hover{
+    filter:brightness(1.12)
+  }
+
+  /* FORMULARIO DE EDICIÓN */
+
+  .edit-box{
+    display:none;
+    margin-bottom:18px;
+    padding:18px;
+    border-radius:18px;
+    background:#1e293b;
+  }
+
+  .edit-box.active{
+    display:block;
+  }
+
+  .edit-box h2{
+    margin-bottom:15px;
+    font-size:19px;
+  }
+
+  .edit-box label{
+    display:block;
+    margin-top:10px;
+    margin-bottom:5px;
+    color:#cbd5e1;
+    font-size:13px;
+  }
+
+  .edit-box input,
+  .edit-box select,
+  .edit-box textarea{
+    width:100%;
+    box-sizing:border-box;
+    padding:10px;
+    border:1px solid #475569;
+    border-radius:10px;
+    background:#0f172a;
+    color:#fff;
+    font:inherit;
+  }
+
+  .edit-box textarea{
+    min-height:70px;
+    resize:vertical;
+  }
+
+  .edit-buttons{
+    display:flex;
+    gap:8px;
+    margin-top:15px;
+  }
+
+  .edit-buttons button{
+    flex:1;
+    padding:11px;
+    border:0;
+    border-radius:10px;
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  .save-edit{
+    background:#16a34a;
+  }
+
+  .cancel-edit{
+    background:#64748b;
+  }
+</style>
+</head>
+
+<body>
+
+<main class="events-page">
+
+  <header class="events-header">
+    <div>
+      <h1>📅 Mis Eventos</h1>
+    </div>
+
+    <h2 id="userId" class="user-id"></h2>
+  </header>
+
+
+  <!-- FORMULARIO PARA EDITAR -->
+
+  <section id="editBox" class="edit-box">
+
+    <h2>✏️ Editar evento</h2>
+
+    <form id="editForm">
+
+      <label for="editTitulo">Título</label>
+      <input
+        type="text"
+        id="editTitulo"
+        required
+      >
+
+      <label for="editFecha">Fecha</label>
+      <input
+        type="date"
+        id="editFecha"
+        required
+      >
+
+      <label for="editHora">Hora</label>
+      <input
+        type="time"
+        id="editHora"
+        required
+      >
+
+      <label for="editTipo">Tipo</label>
+      <select id="editTipo">
+
+        <option value="Personal">Personal</option>
+        <option value="Trabajo">Trabajo</option>
+        <option value="Salud">Salud</option>
+        <option value="Otro">Otro</option>
+
+      </select>
+
+      <label for="editRecordar">Recordar antes</label>
+      <select id="editRecordar">
+
+        <option value="5">5 minutos</option>
+        <option value="10">10 minutos</option>
+        <option value="15">15 minutos</option>
+        <option value="30">30 minutos</option>
+        <option value="60">1 hora</option>
+
+      </select>
+
+      <label for="editTono">Tono</label>
+      <select id="editTono">
+
+        <option value="Campana">Campana</option>
+        <option value="Cristal">Cristal</option>
+        <option value="Digital">Digital</option>
+        <option value="Alarma">Alarma</option>
+
+      </select>
+
+      <label for="editMensaje">Mensaje</label>
+      <textarea id="editMensaje"></textarea>
+
+      <div class="edit-buttons">
+
+        <button
+          type="submit"
+          class="save-edit"
+        >
+          Guardar cambios
+        </button>
+
+        <button
+          type="button"
+          class="cancel-edit"
+          id="cancelEdit"
+        >
+          Cancelar
+        </button>
+
+      </div>
+
+    </form>
+
+  </section>
+
+
+  <!-- LISTA DE EVENTOS -->
+
+  <section
+    id="eventList"
+    class="event-list"
+    aria-live="polite"
+  ></section>
+
+
+  <a
+    class="home-link"
+    href="index.html"
+  >
+    ⬅ Volver al inicio
+  </a>
+
+  <p
+    id="statusMessage"
+    class="status-message"
+    role="status"
+  ></p>
+
+</main>
+
+
+<script>
+
+const sesion = JSON.parse(
+  localStorage.getItem('sesion')
+);
+
+const eventList = document.getElementById('eventList');
+const statusMessage = document.getElementById('statusMessage');
+const userId = document.getElementById('userId');
+
+const editBox = document.getElementById('editBox');
+const editForm = document.getElementById('editForm');
+
+const editTitulo = document.getElementById('editTitulo');
+const editFecha = document.getElementById('editFecha');
+const editHora = document.getElementById('editHora');
+const editTipo = document.getElementById('editTipo');
+const editRecordar = document.getElementById('editRecordar');
+const editTono = document.getElementById('editTono');
+const editMensaje = document.getElementById('editMensaje');
+
+const cancelEdit = document.getElementById('cancelEdit');
+
+let eventoEditandoId = null;
+
+
+/* ==============================
+   COMPROBAR SESIÓN
+============================== */
+
+if (!sesion || !sesion.usuario_id) {
+
+  window.location.href = 'login.html';
+
+} else {
+
+  userId.textContent = sesion.usuario_id;
+
+}
+
+
+/* ==============================
+   LEER EVENTOS
+============================== */
+
+function leerEventos(){
+
+  try{
+
+    return JSON.parse(
+      localStorage.getItem('eventos')
+    ) || [];
+
+  }catch(error){
+
+    return [];
+
+  }
+
+}
+
+
+/* ==============================
+   GUARDAR EVENTOS
+============================== */
+
+function guardarEventos(eventos){
+
+  localStorage.setItem(
+    'eventos',
+    JSON.stringify(eventos)
+  );
+
+}
+
+
+/* ==============================
+   EVENTOS DEL USUARIO
+============================== */
+
+function eventosDelUsuario(eventos){
+
+  return eventos
+    .map((evento, indice) => ({
+      evento,
+      indice
+    }))
+    .filter(item =>
+      item.evento.usuario_id === sesion.usuario_id
+    )
+    .sort((a,b) => {
+
+      const fechaA =
+        `${a.evento.fecha}T${a.evento.hora || '00:00'}`;
+
+      const fechaB =
+        `${b.evento.fecha}T${b.evento.hora || '00:00'}`;
+
+      return fechaA.localeCompare(fechaB);
+
+    });
+
+}
+
+
+/* ==============================
+   FORMATO DE FECHA
+============================== */
+
+function formatoFecha(fecha, hora){
+
+  const fechaEvento =
+    new Date(`${fecha}T${hora || '00:00'}`);
+
+  if(Number.isNaN(fechaEvento.getTime())){
+
+    return `${fecha} ${hora || ''}`;
+
+  }
+
+  return fechaEvento.toLocaleDateString(
+    'es-CO',
+    {
+      weekday:'long',
+      day:'numeric',
+      month:'long',
+      year:'numeric'
+    }
+  ) + (hora ? ` · ${hora}` : '');
+
+}
+
+
+/* ==============================
+   EVITAR HTML MALICIOSO
+============================== */
+
+function escaparHtml(valor){
+
+  return String(valor || '').replace(
+    /[&<>"']/g,
+    caracter => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#039;'
+    }[caracter])
+  );
+
+}
+
+
+/* ==============================
+   MOSTRAR EVENTOS
+============================== */
+
+function mostrarEventos(){
+
+  const eventos = leerEventos();
+
+  const lista = eventosDelUsuario(eventos);
+
+  if(!lista.length){
+
+    eventList.innerHTML = `
+      <div class="empty-state">
+
+        <strong>Aún no tienes eventos</strong>
+
+        <p>
+          Crea tu primer recordatorio para verlo aquí.
+        </p>
+
+        <a
+          class="create-link"
+          href="crear_evento.html"
+        >
+          Crear evento
+        </a>
+
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  eventList.innerHTML = lista.map(
+    ({evento, indice}) => `
+
+      <article
+        class="event-item${evento.completado ? ' completed' : ''}"
+      >
+
+        <div class="event-top">
+
+          <h2 class="event-title">
+            ${escaparHtml(evento.titulo)}
+          </h2>
+
+          <span class="event-type">
+            ${escaparHtml(evento.tipo || 'Personal')}
+          </span>
+
+        </div>
+
+
+        <p class="event-date">
+
+          ${escaparHtml(
+            formatoFecha(
+              evento.fecha,
+              evento.hora
+            )
+          )}
+
+        </p>
+
+
+        ${
+          evento.mensaje
+            ? `
+              <p class="event-message">
+                ${escaparHtml(evento.mensaje)}
+              </p>
+            `
+            : ''
+        }
+
+
+        <div class="event-actions">
+
+          <button
+            type="button"
+            data-action="complete"
+            data-index="${indice}"
+          >
+            ${
+              evento.completado
+                ? 'Reabrir'
+                : 'Completar'
+            }
+          </button>
+
+
+          <button
+            type="button"
+            class="edit-button"
+            data-action="edit"
+            data-index="${indice}"
+          >
+            Editar
+          </button>
+
+
+          <button
+            type="button"
+            class="delete-button"
+            data-action="delete"
+            data-index="${indice}"
+          >
+            Eliminar
+          </button>
+
+        </div>
+
+      </article>
+
+    `
+  ).join('');
+
+}
+
+
+/* ==============================
+   BOTONES DE EVENTOS
+============================== */
+
+eventList.addEventListener(
+  'click',
+  event => {
+
+    const button =
+      event.target.closest(
+        'button[data-action]'
+      );
+
+    if(!button) return;
+
+    const indice =
+      Number(button.dataset.index);
+
+    const eventos = leerEventos();
+
+    const evento = eventos[indice];
+
+    if(!evento) return;
+
+    if(
+      evento.usuario_id !==
+      sesion.usuario_id
+    ){
+
+      return;
+
+    }
+
+
+    /* ==========================
+       ELIMINAR
+    ========================== */
+
+    if(button.dataset.action === 'delete'){
+
+      const confirmar =
+        window.confirm(
+          '¿Estás seguro de que quieres eliminar este evento?'
+        );
+
+      if(!confirmar) return;
+
+
+      eventos.splice(indice, 1);
+
+      guardarEventos(eventos);
+
+      statusMessage.textContent =
+        'Evento eliminado correctamente.';
+
+      mostrarEventos();
+
+      return;
+
+    }
+
+
+    /* ==========================
+       COMPLETAR / REABRIR
+    ========================== */
+
+    if(button.dataset.action === 'complete'){
+
+      evento.completado =
+        !evento.completado;
+
+      guardarEventos(eventos);
+
+      statusMessage.textContent =
+        evento.completado
+          ? 'Evento completado.'
+          : 'Evento reabierto.';
+
+      mostrarEventos();
+
+      return;
+
+    }
+
+
+    /* ==========================
+       EDITAR
+    ========================== */
+
+    if(button.dataset.action === 'edit'){
+
+      eventoEditandoId =
+        evento.evento_id;
+
+      editTitulo.value =
+        evento.titulo || '';
+
+      editFecha.value =
+        evento.fecha || '';
+
+      editHora.value =
+        evento.hora || '';
+
+      editTipo.value =
+        evento.tipo || 'Personal';
+
+      editRecordar.value =
+        String(
+          evento.recordar_antes || '10'
+        );
+
+      editTono.value =
+        evento.tono || 'Campana';
+
+      editMensaje.value =
+        evento.mensaje || '';
+
+      editBox.classList.add('active');
+
+      editBox.scrollIntoView({
+        behavior:'smooth',
+        block:'start'
+      });
+
+    }
+
+  }
+);
+
+
+/* ==============================
+   GUARDAR CAMBIOS
+============================== */
+
+editForm.addEventListener(
+  'submit',
+  event => {
+
+    event.preventDefault();
+
+    const titulo =
+      editTitulo.value.trim();
+
+    if(!titulo){
+
+      alert(
+        'Escribe un título para el evento.'
+      );
+
+      return;
+
+    }
+
+
+    const eventos = leerEventos();
+
+
+    const evento =
+      eventos.find(
+        item =>
+          item.evento_id ===
+          eventoEditandoId
+      );
+
+
+    if(!evento){
+
+      alert(
+        'No se encontró el evento.'
+      );
+
+      cerrarEdicion();
+
+      return;
+
+    }
+
+
+    /* ACTUALIZAR DATOS */
+
+    evento.titulo =
+      titulo;
+
+    evento.fecha =
+      editFecha.value;
+
+    evento.hora =
+      editHora.value;
+
+    evento.tipo =
+      editTipo.value;
+
+    evento.recordar_antes =
+      editRecordar.value;
+
+    evento.tono =
+      editTono.value;
+
+    evento.mensaje =
+      editMensaje.value.trim();
+
+
+    guardarEventos(eventos);
+
+
+    statusMessage.textContent =
+      'Evento actualizado correctamente.';
+
+
+    cerrarEdicion();
+
+    mostrarEventos();
+
+  }
+);
+
+
+/* ==============================
+   CANCELAR EDICIÓN
+============================== */
+
+cancelEdit.addEventListener(
+  'click',
+  () => {
+
+    cerrarEdicion();
+
+  }
+);
+
+
+function cerrarEdicion(){
+
+  editBox.classList.remove(
+    'active'
+  );
+
+  editForm.reset();
+
+  eventoEditandoId = null;
+
+}
+
+
+/* ==============================
+   MOSTRAR EVENTOS AL CARGAR
+============================== */
+
+mostrarEventos();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recorda+ Premium</title>
+<link rel="manifest" href="manifest.json">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#1e3a8a,#2563eb,#7c3aed);overflow:hidden}
+body::before{content:"";position:absolute;width:350px;height:350px;background:#60a5fa;border-radius:50%;filter:blur(120px);top:-120px;left:-80px;opacity:.4}
+body::after{content:"";position:absolute;width:250px;height:250px;background:#c084fc;border-radius:50%;filter:blur(100px);bottom:-60px;right:-50px;opacity:.5}
+.card{position:relative;width:360px;padding:28px;border-radius:28px;background:rgba(255,255,255,.12);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.2);box-shadow:0 25px 45px rgba(0,0,0,.25);color:white;z-index:1}
+.logo{width:85px;height:85px;margin:auto;border-radius:50%;background:white;display:flex;justify-content:center;align-items:center;font-size:42px;color:#2563eb}
+h1{text-align:center;margin-top:15px;font-size:30px}p{text-align:center;opacity:.9;margin-bottom:20px}
+input{width:100%;padding:14px;margin:8px 0;border:none;outline:none;border-radius:12px;background:rgba(255,255,255,.18);color:white;font-size:15px}input::placeholder{color:#e5e7eb}
+button{width:100%;padding:14px;margin-top:12px;border:none;border-radius:14px;background:white;color:#2563eb;font-size:16px;font-weight:bold;cursor:pointer;transition:.3s}button:hover{transform:translateY(-2px)}
+.text{text-align:center;margin-top:18px;font-size:14px}.text span{font-weight:bold;cursor:pointer}.text span:hover{text-decoration:underline}
+#registro{display:none;animation:fade .5s}#login{animation:fade .5s}
+.message{min-height:18px;margin:12px 0 0;color:#ffe0d8;font-size:13px}.message:empty{margin:0}
+@keyframes fade{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:420px){.card{width:calc(100% - 30px);padding:24px}}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="logo">📅</div>
+  <h1>Recorda+</h1>
+  <p>Organiza tu vida de forma inteligente</p>
+  <div id="login">
+    <input id="loginCorreo" type="email" placeholder="Correo electrónico" autocomplete="email" required>
+    <input id="loginClave" type="password" placeholder="Contraseña" autocomplete="current-password" required>
+    <button id="loginButton" type="button">Iniciar sesión</button>
+    <div class="text">¿No tienes cuenta? <span id="showRegister">Crear cuenta</span></div>
+  </div>
+  <div id="registro">
+    <input id="nombre" type="text" placeholder="Nombre completo" autocomplete="name" required>
+    <input id="correo" type="email" placeholder="Correo electrónico" autocomplete="email" required>
+    <input id="clave" type="password" placeholder="Contraseña (mínimo 6 caracteres)" autocomplete="new-password" minlength="6" required>
+    <button id="registerButton" type="button">Registrarme</button>
+    <div class="text">¿Ya tienes cuenta? <span id="showLogin">Iniciar sesión</span></div>
+  </div>
+  <p id="message" class="message"></p>
+</main>
+<script>
+const usersKey = 'usuarios';
+const sessionKey = 'sesion';
+const get = id => document.getElementById(id);
+const readUsers = () => { try { return JSON.parse(localStorage.getItem(usersKey)) || []; } catch { return []; } };
+const showMessage = text => { get('message').textContent = text; };
+if (!localStorage.getItem(usersKey)) {
+  localStorage.setItem(usersKey, JSON.stringify([{
+    usuario_id: 'U001',
+    correo: 'janer@gmail.com',
+    clave: '123456'
+  }]));
+}
+if (!localStorage.getItem('eventos')) {
+  localStorage.setItem('eventos', JSON.stringify([{
+    evento_id: 'E001',
+    usuario_id: 'U001',
+    titulo: 'Parcial',
+    fecha: '2026-09-20',
+    hora: '08:00',
+    tipo: 'Examen',
+    tono: 'Campana',
+    recordar_antes: 30,
+    completado: false
+  }]));
+}
+function openRegister() { get('login').style.display = 'none'; get('registro').style.display = 'block'; showMessage(''); }
+function openLogin() { get('registro').style.display = 'none'; get('login').style.display = 'block'; showMessage(''); }
+function registerUser() {
+  const name = get('nombre').value.trim();
+  const email = get('correo').value.trim().toLowerCase();
+  const password = get('clave').value;
+  const users = readUsers();
+  if (!name || !email || !password) return showMessage('Completa todos los campos.');
+  if (password.length < 6) return showMessage('La contraseña debe tener al menos 6 caracteres.');
+  if (users.some(user => user.correo === email)) return showMessage('Ese correo ya tiene una cuenta.');
+  const nextNumber = users.reduce((highest, item) => {
+    const number = Number(String(item.usuario_id || '').replace(/^U/, '')) || 0;
+    return Math.max(highest, number);
+  }, 0) + 1;
+  const user = {
+    usuario_id: `U${String(nextNumber).padStart(3, '0')}`,
+    nombre: name,
+    correo: email,
+    clave: password
+  };
+  users.push(user);
+  localStorage.setItem(usersKey, JSON.stringify(users));
+  localStorage.setItem(sessionKey, JSON.stringify(user));
+  window.location.href = 'index.html';
+}
+function loginUser() {
+  const email = get('loginCorreo').value.trim().toLowerCase();
+  const password = get('loginClave').value;
+  const user = readUsers().find(candidate => candidate.correo === email && candidate.clave === password);
+  if (!user) return showMessage('Correo o contraseña incorrectos.');
+  localStorage.setItem(sessionKey, JSON.stringify(user));
+  window.location.href = 'index.html';
+}
+get('showRegister').addEventListener('click', openRegister);
+get('showLogin').addEventListener('click', openLogin);
+get('registerButton').addEventListener('click', registerUser);
+get('loginButton').addEventListener('click', loginUser);
+document.addEventListener('keydown', event => { if (event.key !== 'Enter') return; event.preventDefault(); if (get('registro').style.display === 'block') registerUser(); else loginUser(); });
+if (localStorage.getItem(sessionKey)) window.location.href = 'index.html';
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(() => console.log('Recorda+ está preparado para funcionar como PWA'))
+      .catch(error => console.error('Error al registrar la PWA:', error));
+  });
+}
+</script>
+</body>
+</html>

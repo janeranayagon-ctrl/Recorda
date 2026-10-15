@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfil | Recorda+</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<style>
+  body{min-height:100vh;align-items:flex-start;padding:20px;background:#0f172a}
+  .page{width:min(100%,370px);padding-bottom:40px}
+  .header{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+  .back{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;background:#1e293b;color:#fff;text-decoration:none;font-size:24px}
+  h1{font-size:24px}
+  .subtitle{color:#94a3b8;font-size:13px;margin-top:4px}
+  .card{padding:22px;border-radius:20px;background:#1e293b;margin-top:18px}
+  .profile-card{text-align:center}
+  .avatar{width:72px;height:72px;margin:0 auto 14px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:bold}
+  .profile-card h2{font-size:20px}
+  .profile-card p{color:#cbd5e1;font-size:13px;margin-top:7px}
+  .profile-id{display:inline-block;margin-top:15px;padding:6px 10px;border-radius:10px;background:#334155;color:#bfdbfe;font-size:12px}
+  .settings-title{margin-bottom:16px;font-size:18px}
+  .field{display:block;margin-bottom:18px;color:#cbd5e1;font-size:13px;font-weight:600}
+  .field select, .field input[type="checkbox"]{margin-top:8px}
+  .field select{display:block;width:100%;padding:12px;border:1px solid #475569;border-radius:10px;background:#0f172a;color:#fff;font:inherit}
+  .switch-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#0f172a;border:1px solid #475569;padding:12px 14px;border-radius:10px}
+  .switch-row label{color:#e2e8f0;font-size:13px}
+  .switch-row input{width:18px;height:18px}
+  .actions{display:grid;gap:10px;margin-top:18px}
+  .actions a,.actions button{padding:12px;border:0;border-radius:12px;text-align:center;text-decoration:none;font:inherit;font-weight:bold;cursor:pointer}
+  .actions a{background:#2563eb;color:#fff}
+  .actions button{background:#ef4444;color:#fff}
+  .save-settings{background:#10b981;color:#06270f}
+  .status{min-height:18px;margin-top:12px;font-size:12px;color:#93c5fd}
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="header">
+    <a class="back" href="index.html" aria-label="Volver al inicio">←</a>
+    <div><h1>👤 Mi perfil</h1><p class="subtitle">Información de tu cuenta</p></div>
+  </header>
+
+  <section class="card profile-card">
+    <div id="avatar" class="avatar">?</div>
+    <h2 id="nombre">Usuario</h2>
+    <p id="correo"></p>
+    <span id="usuarioId" class="profile-id"></span>
+  </section>
+
+  <section class="card">
+    <h3 class="settings-title">⚙️ Ajustes</h3>
+    <label class="field" for="idioma">🌍 Idioma
+      <select id="idioma" name="idioma">
+        <option value="es">🇪🇸 Español</option>
+        <option value="en">🇺🇸 English</option>
+        <option value="fr">🇫🇷 Français</option>
+        <option value="de">🇩🇪 Deutsch</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="pt">🇵🇹 Português</option>
+        <option value="pt-BR">🇧🇷 Português (Brasil)</option>
+        <option value="nl">🇳🇱 Nederlands</option>
+        <option value="sv">🇸🇪 Svenska</option>
+        <option value="no">🇳🇴 Norsk</option>
+        <option value="da">🇩🇰 Dansk</option>
+        <option value="fi">🇫🇮 Suomi</option>
+        <option value="pl">🇵🇱 Polski</option>
+        <option value="cs">🇨🇿 Čeština</option>
+        <option value="sk">🇸🇰 Slovenčina</option>
+        <option value="hu">🇭🇺 Magyar</option>
+        <option value="ro">🇷🇴 Română</option>
+        <option value="bg">🇧🇬 Български</option>
+        <option value="el">🇬🇷 Ελληνικά</option>
+        <option value="tr">🇹🇷 Türkçe</option>
+        <option value="ru">🇷🇺 Русский</option>
+        <option value="uk">🇺🇦 Українська</option>
+        <option value="ar">🇸🇦 العربية</option>
+        <option value="he">🇮🇱 עברית</option>
+        <option value="hi">🇮🇳 हिन्दी</option>
+        <option value="bn">🇧🇩 বাংলা</option>
+        <option value="ur">🇵🇰 اردو</option>
+        <option value="ta">🇮🇳 தமிழ்</option>
+        <option value="te">🇮🇳 తెలుగు</option>
+        <option value="th">🇹🇭 ไทย</option>
+        <option value="vi">🇻🇳 Tiếng Việt</option>
+        <option value="id">🇮🇩 Bahasa Indonesia</option>
+        <option value="ms">🇲🇾 Bahasa Melayu</option>
+        <option value="zh-CN">🇨🇳 中文（简体）</option>
+        <option value="zh-TW">🇹🇼 中文（繁體）</option>
+        <option value="ja">🇯🇵 日本語</option>
+        <option value="ko">🇰🇷 한국어</option>
+      </select>
+    </label>
+
+    <label class="field" for="tono">Tono de notificación
+      <select id="tono" name="tono">
+        <option value="Campana">Campana</option>
+        <option value="Cristal">Cristal</option>
+        <option value="Digital">Digital</option>
+        <option value="Alarma">Alarma</option>
+      </select>
+    </label>
+
+    <div class="switch-row">
+      <label for="notificaciones">Recibir notificaciones</label>
+      <input id="notificaciones" type="checkbox">
+    </div>
+
+    <button id="guardarAjustes" class="save-settings" type="button" style="width:100%;margin-top:18px;padding:12px;border:0;border-radius:10px;font:inherit;font-weight:700;cursor:pointer;">Guardar ajustes</button>
+    <p id="ajustesStatus" class="status" aria-live="polite"></p>
+  </section>
+
+  <div class="actions">
+    <a href="index.html">Volver al inicio</a>
+    <button id="logout" type="button">Cerrar sesión</button>
+  </div>
+</main>
+<script>
+const sesion = JSON.parse(localStorage.getItem('sesion'));
+const CONFIG_KEY = 'recordarplus_config';
+const configDefault = { idioma: 'es', tono: 'Campana', notificaciones: true };
+
+function obtenerConfig() {
+  try {
+    const guardada = JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}');
+    return { ...configDefault, ...guardada };
+  } catch (error) {
+    return { ...configDefault };
+  }
+}
+
+function guardarConfig(config) {
+  localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+}
+
+if (!sesion || !sesion.usuario_id) {
+  window.location.href = 'login.html';
+} else {
+  document.getElementById('nombre').textContent = sesion.nombre || sesion.correo.split('@')[0];
+  document.getElementById('correo').textContent = sesion.correo || '';
+  document.getElementById('usuarioId').textContent = sesion.usuario_id;
+  document.getElementById('avatar').textContent = (sesion.nombre || sesion.correo || '?').charAt(0).toUpperCase();
+}
+
+const idioma = document.getElementById('idioma');
+const tono = document.getElementById('tono');
+const notificaciones = document.getElementById('notificaciones');
+const status = document.getElementById('ajustesStatus');
+
+const configActual = obtenerConfig();
+idioma.value = configActual.idioma || 'es';
+tono.value = configActual.tono || 'Campana';
+notificaciones.checked = configActual.notificaciones !== false;
+
+document.getElementById('guardarAjustes').addEventListener('click', async () => {
+  const nuevaConfig = {
+    idioma: idioma.value,
+    tono: tono.value,
+    notificaciones: notificaciones.checked
+  };
+  guardarConfig(nuevaConfig);
+  document.documentElement.lang = nuevaConfig.idioma;
+
+  if (nuevaConfig.notificaciones) {
+    if ('Notification' in window && Notification.permission !== 'granted') {
+      await Notification.requestPermission();
+    }
+  }
+
+  status.textContent = 'Ajustes guardados correctamente.';
+});
+
+document.getElementById('logout').addEventListener('click', () => {
+  localStorage.removeItem('sesion');
+  window.location.href = 'login.html';
+});
+</script>
+</body>
+</html>
